@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      - POSTGRES_USER=simplechurchUser
+      - POSTGRES_PASSWORD=simplechurchPassword
+      - POSTGRES_DB=simplechurchDb
+    networks:
+      - backendDb
+    ports:
+      - '5432:5432'
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - spring.jpa.hibernate.ddl-auto=update
+      - spring.datasource.url=jdbc:postgresql://db:5432/simplechurchDb
+      - spring.datasource.driverClassName=org.postgresql.Driver
+      - spring.datasource.username=simplechurchUser
+      - spring.datasource.password=simplechurchPassword
+    ports:
+      - '8080:8080'
+    networks:
+      - backendDb
+      - backendFrontend
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    networks:
+      - backendFrontend
+
+networks:
+  backendDb:
+    driver: bridge
+  backendFrontend:
+    driver: bridge
