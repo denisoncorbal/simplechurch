@@ -11,7 +11,7 @@ import ListSubheader from '@mui/material/ListSubheader';
 import { useRouter } from 'next/navigation';
 import * as React from 'react';
 
-export function mainListItems() {
+export function MainListItems() {
     const router = useRouter();
     return (
         <React.Fragment>
@@ -49,7 +49,7 @@ export function mainListItems() {
     )
 }
 
-export function secondaryListItems() {
+export function SecondaryListItems() {
     return (
         <React.Fragment>
             <ListSubheader component="div" inset>

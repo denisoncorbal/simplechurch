@@ -18,7 +18,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import Copyright from '../copyright/copyright';
 import Profile from '../profile/profile';
-import { mainListItems, secondaryListItems } from './listItems';
+import { MainListItems, SecondaryListItems } from './listItems';
 
 const drawerWidth: number = 240;
 
@@ -128,9 +128,9 @@ export default function Dashboard({
                 </Toolbar>
                 <Divider />
                 <List component="nav">
-                    {mainListItems()}
+                    {MainListItems()}
                     <Divider sx={{ my: 1 }} />
-                    {secondaryListItems()}
+                    {SecondaryListItems()}
                 </List>
             </Drawer>
             <Box
