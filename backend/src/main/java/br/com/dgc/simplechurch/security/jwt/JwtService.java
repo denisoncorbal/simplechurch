@@ -23,9 +23,24 @@ import org.springframework.stereotype.Service;
 public class JwtService {
     private final String ISSUER = "SimpleChurchBackend";
     private final String AUDIENCE = "SimpleChurchFrontend";
-    private final int EXPIRATION_TIME_IN_MINUTES = 10;
-    private final int NOT_BEFORE_MINUTES = 2;
-    private final int SECONDS_ALLOWED_VARIATION = 30;
+    private final int ACCESS_EXPIRATION_TIME_IN_MINUTES = 10;
+    private final int ACCESS_NOT_BEFORE_MINUTES = 2;
+    private final int ACCESS_SECONDS_ALLOWED_VARIATION = 30;
+    private final int REFRESH_EXPIRATION_TIME_IN_MINUTES = 10;
+    private final int REFRESH_NOT_BEFORE_MINUTES = 2;
+    private final int REFRESH_SECONDS_ALLOWED_VARIATION = 30;
+
+    private record JwtType(
+            int expirationTimeInMinutes,
+            int notBeforeInMinutes,
+            int secondsAllowedVariation) {
+    }
+
+    public final JwtType ACCESS_TOKEN = new JwtType(ACCESS_EXPIRATION_TIME_IN_MINUTES, ACCESS_NOT_BEFORE_MINUTES,
+            ACCESS_SECONDS_ALLOWED_VARIATION);
+    public final JwtType REFRESH_TOKEN = new JwtType(REFRESH_EXPIRATION_TIME_IN_MINUTES, REFRESH_NOT_BEFORE_MINUTES,
+            REFRESH_SECONDS_ALLOWED_VARIATION);
+
     private final RsaJsonWebKey RSA_JSON_WEB_KEY = getSignInKey();
     private final String ALGORITHM = AlgorithmIdentifiers.RSA_USING_SHA256;
 
@@ -38,7 +53,7 @@ public class JwtService {
         }
     }
 
-    public String extractUsername(String token) {
+    public String extractUsername(String token, JwtType type) {
         return extractClaim(token, func -> {
             try {
                 return func.getSubject();
@@ -46,30 +61,32 @@ public class JwtService {
                 e.printStackTrace();
                 return null;
             }
-        });
+        }, type);
     }
 
-    public <T> T extractClaim(String token, Function<JwtClaims, T> claimsResolver) {
-        final JwtClaims claims = extractAllClaims(token);
+    public <T> T extractClaim(String token, Function<JwtClaims, T> claimsResolver, JwtType type) {
+        final JwtClaims claims = extractAllClaims(token, type);
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserDetails userDetails, JwtType type) {
+        return generateToken(new HashMap<>(), userDetails, type);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return buildToken(extraClaims, userDetails, EXPIRATION_TIME_IN_MINUTES);
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, JwtType type) {
+        return buildToken(extraClaims, userDetails, type);
     }
 
-    public long getExpirationTime() {
-        return EXPIRATION_TIME_IN_MINUTES;
-    }
+    /*
+     * public long getExpirationTime() {
+     * return EXPIRATION_TIME_IN_MINUTES;
+     * }
+     */
 
     private String buildToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails,
-            long expiration) {
+            JwtType type) {
         // Generate an RSA key pair, which will be used for signing and verification of
         // the JWT, wrapped in a JWK
 
@@ -80,12 +97,12 @@ public class JwtService {
         JwtClaims claims = new JwtClaims();
         claims.setIssuer(ISSUER); // who creates the token and signs it
         claims.setAudience(AUDIENCE); // to whom the token is intended to be sent
-        claims.setExpirationTimeMinutesInTheFuture(expiration); // time when the token will expire (10
-                                                                // minutes from now)
+        claims.setExpirationTimeMinutesInTheFuture(type.expirationTimeInMinutes); // time when the token will expire (10
+        // minutes from now)
         claims.setGeneratedJwtId(); // a unique identifier for the token
         claims.setIssuedAtToNow(); // when the token was issued/created (now)
-        claims.setNotBeforeMinutesInThePast(NOT_BEFORE_MINUTES); // time before which the token is not yet valid (2
-                                                                 // minutes ago)
+        claims.setNotBeforeMinutesInThePast(type.notBeforeInMinutes); // time before which the token is not yet valid (2
+        // minutes ago)
         claims.setSubject(userDetails.getUsername()); // the subject/principal is whom the token is about
         claims.setStringListClaim("roles",
                 userDetails.getAuthorities().stream().map((authority) -> authority.getAuthority()).toList()); // multi-valued
@@ -125,16 +142,16 @@ public class JwtService {
         return jwt;
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public boolean isTokenValid(String token, UserDetails userDetails, JwtType type) {
+        final String username = extractUsername(token, type);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token, type);
     }
 
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    private boolean isTokenExpired(String token, JwtType type) {
+        return extractExpiration(token, type).before(new Date());
     }
 
-    private Date extractExpiration(String token) {
+    private Date extractExpiration(String token, JwtType type) {
         return new Date(extractClaim(token, func -> {
             try {
                 return func.getExpirationTime();
@@ -142,14 +159,15 @@ public class JwtService {
                 e.printStackTrace();
                 return null;
             }
-        }).getValueInMillis());
+        }, type).getValueInMillis());
     }
 
-    private JwtClaims extractAllClaims(String token) {
+    private JwtClaims extractAllClaims(String token, JwtType type) {
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 .setRequireExpirationTime() // the JWT must have an expiration time
-                .setAllowedClockSkewInSeconds(SECONDS_ALLOWED_VARIATION) // allow some leeway in validating time based
-                                                                         // claims to account for
+                .setAllowedClockSkewInSeconds(type.secondsAllowedVariation) // allow some leeway in validating time
+                                                                            // based
+                                                                            // claims to account for
                 // clock skew
                 .setRequireSubject() // the JWT must have a subject claim
                 .setExpectedIssuer(ISSUER) // whom the JWT needs to have been issued by

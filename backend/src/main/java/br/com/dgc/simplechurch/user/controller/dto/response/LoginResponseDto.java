@@ -9,6 +9,13 @@ public class LoginResponseDto {
     public LoginResponseDto() {
     }
 
+    public LoginResponseDto(String firstName, String lastName, String accessToken, String refreshToken) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
+
     public String getFirstName() {
         return firstName;
     }
