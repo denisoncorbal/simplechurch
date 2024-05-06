@@ -42,6 +42,6 @@ public class SecurityBeans {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-        return new Argon2PasswordEncoder(16, 32, 1, 66536, 2);
+        return new Argon2PasswordEncoder(16, 32, 2, 66536, 2);
     }
 }
