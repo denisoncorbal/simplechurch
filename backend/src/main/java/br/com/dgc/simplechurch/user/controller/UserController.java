@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.dgc.simplechurch.security.jwt.JwtService;
 import br.com.dgc.simplechurch.user.controller.dto.UserMapper;
 import br.com.dgc.simplechurch.user.controller.dto.request.LoginRequestDto;
+import br.com.dgc.simplechurch.user.controller.dto.request.RefreshRequestDto;
 import br.com.dgc.simplechurch.user.controller.dto.request.SignInRequestDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.LoginResponseDto;
+import br.com.dgc.simplechurch.user.controller.dto.response.RefreshResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.SignInResponseDto;
+import br.com.dgc.simplechurch.user.exception.PasswordInvalidException;
 import br.com.dgc.simplechurch.user.model.User;
 import br.com.dgc.simplechurch.user.service.UserService;
 
@@ -32,8 +35,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> attemptToLogin(@RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<LoginResponseDto> attemptToLogin(@RequestBody LoginRequestDto loginRequestDto)
+            throws PasswordInvalidException {
         User user = (User) this.userDetailsService.loadUserByUsername(loginRequestDto.getEmail());
+        if (!this.userService.checkPassword(user, loginRequestDto.getPassword()))
+            throw new PasswordInvalidException("Senha inválida");
         String accessToken = this.jwtService.generateToken(user, jwtService.ACCESS_TOKEN);
         String refreshToken = this.jwtService.generateToken(user, jwtService.REFRESH_TOKEN);
         return ResponseEntity.ok(this.userMapper.userAndTokensToLoginResponseDto(user, accessToken, refreshToken));
@@ -46,4 +52,13 @@ public class UserController {
                 .body(this.userMapper.userToSignInResponseDto(user));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshResponseDto> signIn(@RequestBody RefreshRequestDto refreshRequestDto) {
+        final String userEmail = jwtService.extractUsername(refreshRequestDto.getRefreshToken(),
+                jwtService.REFRESH_TOKEN);
+        User user = (User) this.userDetailsService.loadUserByUsername(userEmail);
+        String accessToken = this.jwtService.generateToken(user, jwtService.ACCESS_TOKEN);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(this.userMapper.tokenAndRefreshRequestDtoToRefreshResponseDto(accessToken, refreshRequestDto));
+    }
 }
