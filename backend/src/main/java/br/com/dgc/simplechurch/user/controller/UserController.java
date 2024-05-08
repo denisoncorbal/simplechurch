@@ -26,7 +26,6 @@ public class UserController {
     private UserService userService;
     private UserDetailsService userDetailsService;
     private JwtService jwtService;
-    private final UserMapper userMapper = new UserMapper();
 
     public UserController(UserService userService, UserDetailsService userDetailsService, JwtService jwtService) {
         this.userService = userService;
@@ -42,14 +41,14 @@ public class UserController {
             throw new PasswordInvalidException("Senha inválida");
         String accessToken = this.jwtService.generateToken(user, jwtService.ACCESS_TOKEN);
         String refreshToken = this.jwtService.generateToken(user, jwtService.REFRESH_TOKEN);
-        return ResponseEntity.ok(this.userMapper.userAndTokensToLoginResponseDto(user, accessToken, refreshToken));
+        return ResponseEntity.ok(UserMapper.userAndTokensToLoginResponseDto(user, accessToken, refreshToken));
     }
 
     @PostMapping("/signin")
     public ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto signInRequestDto) {
-        User user = this.userService.createUser(this.userMapper.signInRequestDtoToUser(signInRequestDto));
+        User user = this.userService.createUser(UserMapper.signInRequestDtoToUser(signInRequestDto));
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.userMapper.userToSignInResponseDto(user));
+                .body(UserMapper.userToSignInResponseDto(user));
     }
 
     @PostMapping("/refresh")
@@ -59,6 +58,6 @@ public class UserController {
         User user = (User) this.userDetailsService.loadUserByUsername(userEmail);
         String accessToken = this.jwtService.generateToken(user, jwtService.ACCESS_TOKEN);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.userMapper.tokenAndRefreshRequestDtoToRefreshResponseDto(accessToken, refreshRequestDto));
+                .body(UserMapper.tokenAndRefreshRequestDtoToRefreshResponseDto(accessToken, refreshRequestDto));
     }
 }
