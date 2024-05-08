@@ -1,4 +1,6 @@
 'use client'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import MenuIcon from '@mui/icons-material/Menu';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -13,9 +15,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import * as React from 'react';
-
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import MenuIcon from '@mui/icons-material/Menu';
 import Copyright from '../copyright/copyright';
 import Profile from '../profile/profile';
 import { MainListItems, SecondaryListItems } from './listItems';
@@ -110,7 +109,7 @@ export default function Dashboard({
                     >
                         SimpleChurch
                     </Typography>
-                    <Profile user={{ firstName: 'Denison', lastName: 'Corbal' }} />
+                    <Profile />
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>

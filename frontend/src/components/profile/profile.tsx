@@ -1,44 +1,58 @@
+import { Auth } from '@/context/auth/AuthContext';
 import { Dropdown } from '@mui/base/Dropdown';
 import { Menu } from '@mui/base/Menu';
 import { MenuButton as BaseMenuButton } from '@mui/base/MenuButton';
 import { MenuItem as BaseMenuItem, menuItemClasses } from '@mui/base/MenuItem';
 import { Person } from '@mui/icons-material';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { blue } from '@mui/material/colors';
 import { styled } from '@mui/system';
+import { usePathname, useRouter } from 'next/navigation';
+import { useContext } from 'react';
 import AnimatedListbox from './animatedListbox';
-interface MenuIntroductionProps {
-  user: {
-    firstName: string,
-    lastName: string
-  }
-}
-export default function MenuIntroduction(props: MenuIntroductionProps) {
+
+export default function MenuIntroduction() {
+  const auth = useContext(Auth);
+  const router = useRouter();
+  const path = usePathname();
+
   const createHandleMenuClick = (menuItem: string) => {
     return () => {
-      console.log(`Clicked on ${menuItem}`);
+      if (menuItem === 'logout')
+        auth?.setUser({
+          firstName: '',
+          lastName: '',
+          accessToken: '',
+          refreshToken: '',
+          roles: []
+        })
     };
   };
 
   return (
-    <Dropdown>
-      <MenuButton sx={{
-        display: 'flex',
-        flexDirection: 'row'
-      }}>
-        <Person />
-        <Typography>
-          {props.user.firstName + ' ' + props.user.lastName}
-        </Typography>
-      </MenuButton>
-      <Menu slots={{ listbox: AnimatedListbox }}>
-        <MenuItem onClick={createHandleMenuClick('Profile')}>Profile</MenuItem>
-        <MenuItem onClick={createHandleMenuClick('Language settings')}>
-          Language settings
-        </MenuItem>
-        <MenuItem onClick={createHandleMenuClick('Log out')}>Log out</MenuItem>
-      </Menu>
-    </Dropdown>
+    (auth?.user && auth?.user?.firstName.length > 0) ?
+      <Dropdown>
+        <MenuButton sx={{
+          display: 'flex',
+          flexDirection: 'row'
+        }}>
+          <Person />
+          <Typography>
+            {auth?.user.firstName + ' ' + auth?.user.lastName}
+          </Typography>
+        </MenuButton>
+        <Menu slots={{ listbox: AnimatedListbox }}>
+          {auth?.user.roles.map((roleName) => {
+            return (
+              <MenuItem key={roleName} onClick={createHandleMenuClick(roleName.trim().toLocaleLowerCase())}>{roleName}</MenuItem>
+            )
+          })}
+          <Divider />
+          <MenuItem onClick={createHandleMenuClick('logout')}>Log out</MenuItem>
+        </Menu>
+      </Dropdown> : <>{path.includes('login') ? <></> : router.push('/routes/auth/login')}</>
+
   );
 }
 

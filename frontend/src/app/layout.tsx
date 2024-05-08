@@ -1,3 +1,4 @@
+import AuthContext from '@/context/auth/AuthContext';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import type { Metadata } from "next";
@@ -23,9 +24,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
-            <Dashboard>
-              {children}
-            </Dashboard>
+            <AuthContext>
+              <Dashboard>
+                {children}
+              </Dashboard>
+            </AuthContext>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
