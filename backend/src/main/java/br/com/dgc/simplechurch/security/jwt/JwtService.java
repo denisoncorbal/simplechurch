@@ -135,7 +135,6 @@ public class JwtService {
         try {
             jwt = jws.getCompactSerialization();
         } catch (JoseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }
