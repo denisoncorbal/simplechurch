@@ -1,5 +1,7 @@
 package br.com.dgc.simplechurch.church.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.dgc.simplechurch.church.controller.dto.ChurchMapper;
 import br.com.dgc.simplechurch.church.controller.dto.request.CreateChurchRequestDto;
 import br.com.dgc.simplechurch.church.controller.dto.response.CreateChurchResponseDto;
+import br.com.dgc.simplechurch.church.controller.dto.response.ReadChurchResponseDto;
 import br.com.dgc.simplechurch.church.model.Church;
 import br.com.dgc.simplechurch.church.service.ChurchService;
 
@@ -34,8 +37,9 @@ public class ChurchController {
     }
 
     @GetMapping
-    public ResponseEntity<?> readAllChurches() {
-        return null;
+    public ResponseEntity<List<ReadChurchResponseDto>> readAllChurches() {
+        List<Church> churches = this.churchService.readAllChurches();
+        return ResponseEntity.ok(ChurchMapper.listChurchToListReadChurchResponseDto(churches));
     }
 
     @PutMapping

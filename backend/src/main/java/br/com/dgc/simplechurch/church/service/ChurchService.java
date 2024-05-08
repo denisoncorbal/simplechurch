@@ -1,5 +1,7 @@
 package br.com.dgc.simplechurch.church.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import br.com.dgc.simplechurch.church.model.Church;
@@ -15,5 +17,9 @@ public class ChurchService {
 
     public Church createChurch(Church church) {
         return this.churchRepository.save(church);
+    }
+
+    public List<Church> readAllChurches() {
+        return this.churchRepository.findAll();
     }
 }
