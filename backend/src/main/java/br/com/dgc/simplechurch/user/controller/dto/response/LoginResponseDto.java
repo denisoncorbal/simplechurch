@@ -1,19 +1,24 @@
 package br.com.dgc.simplechurch.user.controller.dto.response;
 
+import java.util.Set;
+
 public class LoginResponseDto {
     private String firstName;
     private String lastName;
     private String accessToken;
     private String refreshToken;
+    private Set<String> roles;
 
     public LoginResponseDto() {
     }
 
-    public LoginResponseDto(String firstName, String lastName, String accessToken, String refreshToken) {
+    public LoginResponseDto(String firstName, String lastName, String accessToken, String refreshToken,
+            Set<String> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.roles = roles;
     }
 
     public String getFirstName() {
@@ -46,6 +51,14 @@ public class LoginResponseDto {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 
 }
