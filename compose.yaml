@@ -2,6 +2,8 @@ services:
   db:
     image: postgres:latest
     container_name: db
+    volumes:
+      - ./postgresql.conf:/etc/postgresql.conf
     environment:
       - POSTGRES_USER=simplechurchUser
       - POSTGRES_PASSWORD=simplechurchPassword
@@ -11,6 +13,11 @@ services:
       - dbAdminDb
     ports:
       - '5432:5432'
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 800M
 
   dbAdmin:
     image: dpage/pgadmin4:latest
@@ -21,7 +28,7 @@ services:
     ports:
       - "81:80"
     networks:
-      - dbAdminDb
+      - dbAdminDb    
 
   backend:
     container_name: backend
@@ -39,6 +46,11 @@ services:
     networks:
       - backendDb
       - backendFrontend
+    deploy:
+      resources:
+        limits:
+          cpus: '1.8'
+          memory: 3G
 
   frontend:
     container_name: frontend
@@ -49,6 +61,12 @@ services:
       - '3000:3000'
     networks:
       - backendFrontend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 200M
+    
 
 networks:
   backendDb:
