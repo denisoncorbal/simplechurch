@@ -11,6 +11,16 @@ interface LoginResponseDto {
     roles: string[]
 }
 
+interface RefreshRequestDto {
+    accessToken: string,
+    refreshToken: string
+}
+
+interface RefreshResponseDto {
+    accessToken: string,
+    refreshToken: string
+}
+
 interface User {
     firstName: string,
     lastName: string,
@@ -29,4 +39,14 @@ interface SignInRequestDto {
     lastName: string,
     email: string,
     password: string
+}
+
+interface CreateChurchRequestDto {
+    name: string,
+    cnpj: string
+}
+
+interface CreateChurchResponseDto {
+    id: string,
+    name: string
 }

@@ -4,3 +4,5 @@ const BACKEND_VERSION = "v1"
 const BACKEND_BASE_ROUTE = BACKEND_PROTOCOL + "://localhost:" + BACKEND_PORT + "/api/" + BACKEND_VERSION + "/";
 
 export const LOGIN_ENDPOINT = BACKEND_BASE_ROUTE + "user/login";
+export const REFRESH_ENDPOINT = BACKEND_BASE_ROUTE + "user/refresh";
+export const CHURCH_ENDPOINT = BACKEND_BASE_ROUTE + "church";
