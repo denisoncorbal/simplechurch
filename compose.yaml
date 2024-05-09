@@ -28,7 +28,7 @@ services:
     ports:
       - "81:80"
     networks:
-      - dbAdminDb    
+      - dbAdminDb
 
   backend:
     container_name: backend
@@ -41,6 +41,7 @@ services:
       - spring.datasource.driverClassName=org.postgresql.Driver
       - spring.datasource.username=simplechurchUser
       - spring.datasource.password=simplechurchPassword
+      - spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
     ports:
       - '8081:8081'
     networks:
@@ -66,7 +67,6 @@ services:
         limits:
           cpus: '0.2'
           memory: 200M
-    
 
 networks:
   backendDb:
