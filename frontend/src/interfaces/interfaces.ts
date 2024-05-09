@@ -50,3 +50,9 @@ interface CreateChurchResponseDto {
     id: string,
     name: string
 }
+
+interface ReadChurchResponseDto {
+    id: string,
+    name: string,
+    cnpj: string
+}

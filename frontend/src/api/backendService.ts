@@ -32,3 +32,15 @@ export async function createChurch(church: CreateChurchRequestDto, accessToken: 
     const data = await response.json();
     return data as CreateChurchResponseDto;
 }
+
+export async function readAllChurches(accessToken: string): Promise<ReadChurchResponseDto[]> {
+    const response = await fetch(CHURCH_ENDPOINT, {
+        method: 'GET',
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
+    })
+    const data = await response.json();
+    return data as ReadChurchResponseDto[];
+}
