@@ -1,8 +1,11 @@
 package br.com.dgc.simplechurch.user.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +16,7 @@ import br.com.dgc.simplechurch.user.controller.dto.UserMapper;
 import br.com.dgc.simplechurch.user.controller.dto.request.LoginRequestDto;
 import br.com.dgc.simplechurch.user.controller.dto.request.RefreshRequestDto;
 import br.com.dgc.simplechurch.user.controller.dto.request.SignInRequestDto;
+import br.com.dgc.simplechurch.user.controller.dto.response.AssociateUserAndRoleResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.LoginResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.RefreshResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.SignInResponseDto;
@@ -59,5 +63,12 @@ public class UserController {
         String accessToken = this.jwtService.generateToken(user, jwtService.ACCESS_TOKEN);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(UserMapper.tokenAndRefreshRequestDtoToRefreshResponseDto(accessToken, refreshRequestDto));
+    }
+
+    @PostMapping("/{userId}/role/{roleId}")
+    public ResponseEntity<AssociateUserAndRoleResponseDto> associateUserAndRole(@PathVariable UUID userId,
+            @PathVariable UUID roleId) {
+        User user = this.userService.addRoleToUser(userId, roleId);
+        return ResponseEntity.ok(UserMapper.userToAssociateUserAndRoleResponseDto(user));
     }
 }
