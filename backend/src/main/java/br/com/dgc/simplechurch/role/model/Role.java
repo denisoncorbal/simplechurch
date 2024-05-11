@@ -3,6 +3,7 @@ package br.com.dgc.simplechurch.role.model;
 import java.util.UUID;
 
 import br.com.dgc.simplechurch.user.model.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(unique = true)
     private String name;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tb_user_id")

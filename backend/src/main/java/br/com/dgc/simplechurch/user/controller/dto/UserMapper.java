@@ -18,7 +18,7 @@ public class UserMapper {
     }
 
     public static SignInResponseDto userToSignInResponseDto(User user) {
-        return new SignInResponseDto(user.getEmail());
+        return new SignInResponseDto(user.getId(), user.getEmail());
     }
 
     public static LoginResponseDto userAndTokensToLoginResponseDto(User user, String accessToken, String refreshToken) {
