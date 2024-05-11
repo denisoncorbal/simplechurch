@@ -25,6 +25,7 @@ export default function Login() {
                     id="email"
                     label="E-mail"
                     placeholder='example@example.com'
+                    focused={true}
                 />
                 <TextField
                     required

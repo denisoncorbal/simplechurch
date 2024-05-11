@@ -1,9 +1,11 @@
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ChurchIcon from '@mui/icons-material/Church';
 import HomeIcon from '@mui/icons-material/Home';
 import LayersIcon from '@mui/icons-material/Layers';
 import PeopleIcon from '@mui/icons-material/People';
+import SafetyDividerIcon from '@mui/icons-material/SafetyDivider';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -20,6 +22,18 @@ export function MainListItems() {
                     <HomeIcon />
                 </ListItemIcon>
                 <ListItemText primary="Home" />
+            </ListItemButton>
+            <ListItemButton onClick={() => router.push('/routes/user')}>
+                <ListItemIcon>
+                    <AccountCircleIcon />
+                </ListItemIcon>
+                <ListItemText primary="User" />
+            </ListItemButton>
+            <ListItemButton onClick={() => router.push('/routes/role')}>
+                <ListItemIcon>
+                    <SafetyDividerIcon />
+                </ListItemIcon>
+                <ListItemText primary="Role" />
             </ListItemButton>
             <ListItemButton onClick={() => router.push('/routes/church')}>
                 <ListItemIcon>

@@ -1,21 +1,21 @@
 'use client'
-import { createChurch } from '@/api/backendService';
-import { Auth } from '@/context/auth/AuthContext';
-import { Cancel } from '@mui/icons-material';
+import { createRole } from "@/api/backendService";
+import { Auth } from "@/context/auth/AuthContext";
+import { Cancel } from "@mui/icons-material";
 import SaveIcon from '@mui/icons-material/Save';
-import IconButton from '@mui/material/IconButton';
-import TextField from '@mui/material/TextField';
-import { useRouter } from 'next/navigation';
-import { FormEvent, useContext } from 'react';
-export default function CreateChurch() {
+import IconButton from "@mui/material/IconButton/IconButton";
+import TextField from "@mui/material/TextField/TextField";
+import { useRouter } from "next/navigation";
+import { FormEvent, useContext } from "react";
+
+export default function CreateRole() {
     const auth = useContext(Auth);
     const router = useRouter();
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.target as HTMLFormElement;
         const name = form.elements.namedItem("name") as HTMLInputElement;
-        const cnpj = form.elements.namedItem("cnpj") as HTMLInputElement;
-        const data = await createChurch({ name: name.value, cnpj: cnpj.value }, auth!.user.accessToken);
+        const data = await createRole({ name: name.value }, auth!.user.accessToken);
         console.log(data);
     }
     return (
@@ -27,11 +27,6 @@ export default function CreateChurch() {
                     label="Name"
                     placeholder='Example Church'
                     focused={true}
-                />
-                <TextField
-                    required
-                    id="cnpj"
-                    label="CNPJ"
                 />
                 <IconButton color='success' type='submit'>
                     <SaveIcon />

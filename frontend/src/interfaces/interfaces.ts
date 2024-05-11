@@ -56,3 +56,42 @@ interface ReadChurchResponseDto {
     name: string,
     cnpj: string
 }
+
+interface CreateRoleRequestDto {
+    name: string
+}
+
+interface CreateRoleResponseDto {
+    id: string,
+    name: string
+}
+
+interface ReadRoleResponseDto {
+    id: string,
+    name: string
+}
+
+interface CreateUserRequestDto {
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string
+}
+
+interface CreateUserResponseDto {
+    id: string,
+    email: string
+}
+
+interface ReadUserResponseDto {
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string
+}
+
+interface AssociateUserAndRoleResponseDto {
+    id: string,
+    email: string,
+    roles: string[]
+}
