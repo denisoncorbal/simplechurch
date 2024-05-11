@@ -1,5 +1,6 @@
 package br.com.dgc.simplechurch.user.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,10 @@ public class UserService {
     public User createUser(User user) {
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         return this.userRepository.save(user);
+    }
+
+    public Optional<User> readUserByEmail(String email) {
+        return this.userRepository.findByEmail(email);
     }
 
     public boolean checkPassword(User user, String password) {
