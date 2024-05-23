@@ -13,7 +13,7 @@ export default function ReadRoles() {
         readAllRoles(auth!.user.accessToken).then((data) => {
             setRoles(data);
         })
-    }, [])
+    }, [auth])
 
     if (!roles || roles.length === 0)
         return <CircularProgress />

@@ -37,7 +37,7 @@ export default function CreateUser() {
         readAllRoles(auth!.user.accessToken).then((res) => {
             setRoles(res);
         })
-    }, []);
+    }, [auth]);
 
     return (
         <>

@@ -13,7 +13,7 @@ export default function ReadUsers() {
         readAllUsers(auth!.user.accessToken).then((data) => {
             setUsers(data);
         })
-    }, [])
+    }, [auth])
 
     if (!users || users.length === 0)
         return <CircularProgress />
