@@ -1,4 +1,5 @@
 import AuthContext from '@/context/auth/AuthContext';
+import WrapLocalizationProvider from '@/context/localization/WrapLocalizationProvider';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import type { Metadata } from "next";
@@ -25,9 +26,11 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <ThemeProvider theme={theme}>
             <AuthContext>
-              <Dashboard>
-                {children}
-              </Dashboard>
+              <WrapLocalizationProvider>
+                <Dashboard>
+                  {children}
+                </Dashboard>
+              </WrapLocalizationProvider>
             </AuthContext>
           </ThemeProvider>
         </AppRouterCacheProvider>

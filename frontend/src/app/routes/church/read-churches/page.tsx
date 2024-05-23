@@ -14,7 +14,7 @@ export default function ReadChurches() {
         readAllChurches(auth!.user.accessToken).then((data) => {
             setChurches(data);
         })
-    }, [])
+    }, [auth])
 
     if (!churches || churches.length === 0)
         return <CircularProgress />
