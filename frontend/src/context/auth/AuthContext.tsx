@@ -1,4 +1,5 @@
 'use client'
+import { User } from "@/interfaces/interfaces";
 import React, { useState } from "react";
 
 export interface UserContextType {

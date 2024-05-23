@@ -2,6 +2,7 @@
 import { readAllRoles } from "@/api/backendService";
 import DataTable from "@/components/data-table/dataTable";
 import { Auth } from "@/context/auth/AuthContext";
+import { ReadRoleResponseDto } from "@/interfaces/interfaces";
 import CircularProgress from "@mui/material/CircularProgress/CircularProgress";
 import { useContext, useEffect, useState } from "react";
 

@@ -3,6 +3,7 @@
 import { readAllChurches } from "@/api/backendService";
 import DataTable from "@/components/data-table/dataTable";
 import { Auth } from "@/context/auth/AuthContext";
+import { ReadChurchResponseDto } from "@/interfaces/interfaces";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useContext, useEffect, useState } from "react";
 
