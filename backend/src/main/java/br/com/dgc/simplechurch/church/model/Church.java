@@ -1,12 +1,15 @@
 package br.com.dgc.simplechurch.church.model;
 
+import java.util.Set;
 import java.util.UUID;
 
+import br.com.dgc.simplechurch.member.model.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -18,6 +21,17 @@ public class Church {
     private String name;
     @Column(unique = true)
     private String cnpj;
+
+    @OneToMany(mappedBy = "church")
+    private Set<Member> members;
+
+    public Set<Member> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<Member> members) {
+        this.members = members;
+    }
 
     public Church() {
     }
