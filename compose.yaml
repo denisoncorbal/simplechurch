@@ -41,7 +41,7 @@ services:
       - spring.datasource.driverClassName=org.postgresql.Driver
       - spring.datasource.username=simplechurchUser
       - spring.datasource.password=simplechurchPassword
-      - spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+      - spring.profiles.active=prod
     ports:
       - '8081:8081'
     networks:
