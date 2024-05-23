@@ -32,16 +32,26 @@ public class AdminUserAndRoleStarter implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         logger.info("Initiating admin creation");
-        if (this.userService.readUserByEmail(ADMIN_EMAIL).isEmpty()) {
-            User user = this.userService
+
+        User user = this.userService.readUserByEmail(ADMIN_EMAIL).orElse(null);
+        Role role = this.roleService.readRoleByName(ADMIN_ROLE_NAME).orElse(null);
+
+        if (user == null) {
+            logger.info("User doesn't exist. Starting creation");
+            user = this.userService
                     .createUser(new User(ADMIN_FIRST_NAME, ADMIN_LAST_NAME, ADMIN_EMAIL, ADMIN_PASSWORD));
-            if (this.roleService.readRoleByName(ADMIN_ROLE_NAME).isEmpty()) {
-                Role role = this.roleService.createRole(new Role(ADMIN_ROLE_NAME));
-                this.userService.addRoleToUser(user.getId(), role.getId());
-            }
+        }
+        if (role == null) {
+            logger.info("Role doesn't exist. Starting creation");
+            role = this.roleService.createRole(new Role(ADMIN_ROLE_NAME));
         }
 
-        logger.info("Admin created");
+        if (user != null && role != null) {
+            logger.info("Associating admin user and role");
+            this.userService.addRoleToUser(user.getId(), role.getId());
+        }
+
+        logger.info("Finished Admin creation");
     }
 
 }

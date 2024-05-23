@@ -23,7 +23,7 @@ public class SecurityBeans {
     UserDetailsService userDetailsService() {
         return username -> {
             try {
-                return userRepository.findByEmail(username)
+                return userRepository.loadUserDetails(username)
                         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
             } catch (UsernameNotFoundException e) {
                 e.printStackTrace();

@@ -41,13 +41,9 @@ public class SecurityConfiguration {
                         sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         authorize -> authorize
-                                .requestMatchers(HttpMethod.POST, "/api/v1/user/signin")
-                                .permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/user/login")
                                 .permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/v1/user/refresh")
-                                .permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/api/v1/user/signin")
                                 .permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/api/v1/user/login")
                                 .permitAll()

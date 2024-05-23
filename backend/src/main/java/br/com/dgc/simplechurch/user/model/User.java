@@ -12,13 +12,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import br.com.dgc.simplechurch.church.model.Church;
 import br.com.dgc.simplechurch.role.model.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -42,8 +44,12 @@ public class User implements UserDetails {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany
+    @JoinColumn(name = "roles_id")
     private Set<Role> roles;
+    @ManyToOne
+    @JoinColumn(name = "church_id")
+    private Church church;
 
     public User() {
     }
@@ -58,6 +64,7 @@ public class User implements UserDetails {
         this.credentialsNonExpired = true;
         this.enabled = true;
         this.roles = new HashSet<>();
+        this.church = null;
     }
 
     public UUID getId() {
@@ -152,22 +159,49 @@ public class User implements UserDetails {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public User addRole(Role role) {
+        this.roles.add(role);
+        role.setUser(this);
+        return this;
     }
 
-    public void addRole(Role role) {
-        this.roles.add(role);
+    public User removeRole(Role role) {
+        this.roles.remove(role);
+        role.setUser(null);
+        return this;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream().map((role) -> new SimpleGrantedAuthority(role.getName())).toList();
+        // return this.roles.stream().map((role) -> new
+        // SimpleGrantedAuthority(role.getName())).toList();
+        return this.getRoles().stream().map((role) -> new SimpleGrantedAuthority(role.getName())).toList();
     }
 
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email
+                + ", password=" + password + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
+                + ", accountNonExpired=" + accountNonExpired + ", accountNonLocked=" + accountNonLocked
+                + ", credentialsNonExpired=" + credentialsNonExpired + ", enabled=" + enabled + ", roles=" + roles
+                + ", church=" + church + "]";
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public Church getChurch() {
+        return church;
+    }
+
+    public void setChurch(Church church) {
+        this.church = church;
     }
 
 }

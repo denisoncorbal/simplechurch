@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import br.com.dgc.simplechurch.role.model.Role;
 import br.com.dgc.simplechurch.user.controller.dto.request.RefreshRequestDto;
 import br.com.dgc.simplechurch.user.controller.dto.request.SignInRequestDto;
+import br.com.dgc.simplechurch.user.controller.dto.response.AssociateUserAndChurchResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.AssociateUserAndRoleResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.LoginResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.RefreshResponseDto;
@@ -34,5 +35,9 @@ public class UserMapper {
     public static AssociateUserAndRoleResponseDto userToAssociateUserAndRoleResponseDto(User user) {
         return new AssociateUserAndRoleResponseDto(user.getId(), user.getEmail(),
                 user.getRoles().stream().map(Role::getName).toList());
+    }
+
+    public static AssociateUserAndChurchResponseDto userToAssociateUserAndChurchResponseDto(User user) {
+        return new AssociateUserAndChurchResponseDto(user.getId(), user.getEmail(), user.getChurch().getId());
     }
 }

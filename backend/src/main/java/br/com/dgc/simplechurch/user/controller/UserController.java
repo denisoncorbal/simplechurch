@@ -2,8 +2,11 @@ package br.com.dgc.simplechurch.user.controller;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,15 +14,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.dgc.simplechurch.role.service.RoleService;
 import br.com.dgc.simplechurch.security.jwt.JwtService;
 import br.com.dgc.simplechurch.user.controller.dto.UserMapper;
 import br.com.dgc.simplechurch.user.controller.dto.request.LoginRequestDto;
 import br.com.dgc.simplechurch.user.controller.dto.request.RefreshRequestDto;
 import br.com.dgc.simplechurch.user.controller.dto.request.SignInRequestDto;
+import br.com.dgc.simplechurch.user.controller.dto.response.AssociateUserAndChurchResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.AssociateUserAndRoleResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.LoginResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.RefreshResponseDto;
 import br.com.dgc.simplechurch.user.controller.dto.response.SignInResponseDto;
+import br.com.dgc.simplechurch.user.exception.InvalidRoleException;
 import br.com.dgc.simplechurch.user.exception.PasswordInvalidException;
 import br.com.dgc.simplechurch.user.model.User;
 import br.com.dgc.simplechurch.user.service.UserService;
@@ -29,12 +35,19 @@ import br.com.dgc.simplechurch.user.service.UserService;
 public class UserController {
     private UserService userService;
     private UserDetailsService userDetailsService;
+    private RoleService roleService;
     private JwtService jwtService;
 
-    public UserController(UserService userService, UserDetailsService userDetailsService, JwtService jwtService) {
+    private final String ADMIN_ROLE_NAME = "Admin";
+
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+
+    public UserController(UserService userService, UserDetailsService userDetailsService, JwtService jwtService,
+            RoleService roleService) {
         this.userService = userService;
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
+        this.roleService = roleService;
     }
 
     @PostMapping("/login")
@@ -49,8 +62,34 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto signInRequestDto) {
+    public ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto signInRequestDto)
+            throws InvalidRoleException {
+        logger.info("Attempt to signin");
+        if (signInRequestDto.getRoleId() == null
+                && SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                        .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(ADMIN_ROLE_NAME))) {
+            logger.info("User requesting is admin and is trying to create a admin user");
+            signInRequestDto = new SignInRequestDto(signInRequestDto.getFirstName(), signInRequestDto.getLastName(),
+                    signInRequestDto.getEmail(), signInRequestDto.getPassword(),
+                    this.roleService.readRoleByName(ADMIN_ROLE_NAME).get().getId(),
+                    signInRequestDto.getChurchId());
+        }
+
+        if (signInRequestDto.getRoleId() == null) {
+            logger.info("Attempt to create admin user failed");
+            throw new InvalidRoleException("Invalid role id");
+        }
+
+        logger.info("Creating user");
         User user = this.userService.createUser(UserMapper.signInRequestDtoToUser(signInRequestDto));
+        logger.info("Adding role to user");
+        user = this.userService.addRoleToUser(user.getId(), signInRequestDto.getRoleId());
+        if (signInRequestDto.getChurchId() != null && signInRequestDto.getChurchId().isPresent()) {
+            logger.info("Church provided, adding church");
+            user = this.userService.addChurchToUser(user.getId(), signInRequestDto.getChurchId().get());
+        }
+
+        logger.info("User created with success");
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(UserMapper.userToSignInResponseDto(user));
     }
@@ -70,5 +109,12 @@ public class UserController {
             @PathVariable UUID roleId) {
         User user = this.userService.addRoleToUser(userId, roleId);
         return ResponseEntity.ok(UserMapper.userToAssociateUserAndRoleResponseDto(user));
+    }
+
+    @PostMapping("/{userId}/church/{churchId}")
+    public ResponseEntity<AssociateUserAndChurchResponseDto> associateUserAndChurch(@PathVariable UUID userId,
+            @PathVariable UUID churchId) {
+        User user = this.userService.addChurchToUser(userId, churchId);
+        return ResponseEntity.ok(UserMapper.userToAssociateUserAndChurchResponseDto(user));
     }
 }
