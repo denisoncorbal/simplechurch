@@ -11,6 +11,7 @@ import { styled } from '@mui/system';
 import { usePathname, useRouter } from 'next/navigation';
 import { useContext } from 'react';
 import AnimatedListbox from './animatedListbox';
+import {signOut} from 'next-auth/react';
 
 export default function MenuIntroduction() {
   const auth = useContext(Auth);
@@ -19,14 +20,17 @@ export default function MenuIntroduction() {
 
   const createHandleMenuClick = (menuItem: string) => {
     return () => {
-      if (menuItem === 'logout')
+      if (menuItem === 'logout'){
         auth?.setUser({
           firstName: '',
           lastName: '',
           accessToken: '',
           refreshToken: '',
           roles: []
-        })
+        });
+        signOut();
+      }
+        
     };
   };
 

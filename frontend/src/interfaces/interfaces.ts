@@ -4,6 +4,7 @@ export interface LoginRequestDto {
 }
 
 export interface LoginResponseDto {
+    id: string,
     firstName: string,
     lastName: string,
     accessToken: string,

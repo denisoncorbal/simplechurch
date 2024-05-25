@@ -1,10 +1,11 @@
 'use client'
-import { login } from '@/api/backendService';
 import { Auth } from '@/context/auth/AuthContext';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useContext } from 'react';
+
 export default function Login() {
     const auth = useContext(Auth);
     const router = useRouter()
@@ -13,9 +14,10 @@ export default function Login() {
         const form = e.target as HTMLFormElement;
         const email = form.elements.namedItem("email") as HTMLInputElement;
         const password = form.elements.namedItem("password") as HTMLInputElement;
-        const data = await login({ email: email.value, password: password.value });
-        auth?.setUser(data);
-        router.push('/');
+        // const data = await login({ email: email.value, password: password.value });
+        // auth?.setUser(data);
+        // router.push('/');
+        await signIn('credentials', {email: email.value, password: password.value});
     }
     return (
         <>
