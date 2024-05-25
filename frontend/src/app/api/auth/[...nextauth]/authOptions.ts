@@ -1,7 +1,6 @@
-import { login } from '@/api/backendService';
 import { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-
+import { login } from '../../backend/backendService';
 
 export const authOptions = {
     providers: [

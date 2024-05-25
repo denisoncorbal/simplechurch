@@ -1,12 +1,13 @@
-import AuthContext from '@/context/auth/AuthContext';
-import WrapLocalizationProvider from '@/context/localization/WrapLocalizationProvider';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import type { Metadata } from "next";
+import { Session } from 'next-auth';
 import { Inter } from "next/font/google";
-import Dashboard from '../components/dashboard/dashboard';
-import theme from '../theme';
+import SessionProviderWrapper from './api/auth/[...nextauth]/SessionProviderWrapper';
+import Dashboard from './components/dashboard/dashboard';
+import WrapLocalizationProvider from './context/localization/WrapLocalizationProvider';
 import "./globals.css";
+import theme from './theme';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,23 +18,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  session
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode,
+  session: Session
 }>) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>
-            <AuthContext>
+        <SessionProviderWrapper session={session}>
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={theme}>
               <WrapLocalizationProvider>
                 <Dashboard>
                   {children}
                 </Dashboard>
               </WrapLocalizationProvider>
-            </AuthContext>
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
