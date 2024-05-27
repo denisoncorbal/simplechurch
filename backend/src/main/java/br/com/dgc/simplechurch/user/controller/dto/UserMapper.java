@@ -23,7 +23,7 @@ public class UserMapper {
     }
 
     public static LoginResponseDto userAndTokensToLoginResponseDto(User user, String accessToken, String refreshToken) {
-        return new LoginResponseDto(user.getFirstName(), user.getLastName(), accessToken, refreshToken,
+        return new LoginResponseDto(user.getId(), user.getFirstName(), user.getLastName(), accessToken, refreshToken,
                 user.getRoles().stream().map((Role::getName)).collect(Collectors.toSet()));
     }
 

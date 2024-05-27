@@ -1,8 +1,10 @@
 package br.com.dgc.simplechurch.user.controller.dto.response;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class LoginResponseDto {
+    private UUID id;
     private String firstName;
     private String lastName;
     private String accessToken;
@@ -12,8 +14,9 @@ public class LoginResponseDto {
     public LoginResponseDto() {
     }
 
-    public LoginResponseDto(String firstName, String lastName, String accessToken, String refreshToken,
+    public LoginResponseDto(UUID id, String firstName, String lastName, String accessToken, String refreshToken,
             Set<String> roles) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.accessToken = accessToken;
@@ -59,6 +62,14 @@ public class LoginResponseDto {
 
     public void setRoles(Set<String> roles) {
         this.roles = roles;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
 }

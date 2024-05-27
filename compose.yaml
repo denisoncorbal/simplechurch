@@ -29,6 +29,8 @@ services:
       - "81:80"
     networks:
       - dbAdminDb
+    depends_on:
+      - db
 
   backend:
     container_name: backend
@@ -52,6 +54,8 @@ services:
         limits:
           cpus: '1.8'
           memory: 3G
+    depends_on:
+      - db
 
   frontend:
     container_name: frontend
@@ -67,6 +71,8 @@ services:
         limits:
           cpus: '0.2'
           memory: 200M
+    depends_on:
+      - backend
 
 networks:
   backendDb:
