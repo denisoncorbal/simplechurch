@@ -12,16 +12,10 @@ import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import AnimatedListbox from './animatedListbox';
 
-export default function MenuIntroduction() {
+export default function Profile() {
   const router = useRouter();
   const path = usePathname();
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      if (!path.includes('login'))
-        router.push('/auth/login')
-    }
-  });
+  const { data: session } = useSession();
 
   const createHandleMenuClick = (menuItem: string) => {
     return () => {
@@ -54,7 +48,13 @@ export default function MenuIntroduction() {
         </Menu>
       </Dropdown>
     )
-  return <></>
+  if (session)
+    signOut();
+
+  if (path.includes("login"))
+    return <></>
+
+  router.push("/auth/login");
 }
 
 const MenuItem = styled(BaseMenuItem)(
