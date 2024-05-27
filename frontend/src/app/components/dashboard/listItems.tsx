@@ -23,25 +23,25 @@ export function MainListItems() {
                 </ListItemIcon>
                 <ListItemText primary="Home" />
             </ListItemButton>
-            <ListItemButton onClick={() => router.push('/routes/user')}>
+            <ListItemButton onClick={() => router.push('/user')}>
                 <ListItemIcon>
                     <AccountCircleIcon />
                 </ListItemIcon>
                 <ListItemText primary="User" />
             </ListItemButton>
-            <ListItemButton onClick={() => router.push('/routes/role')}>
+            <ListItemButton onClick={() => router.push('/role')}>
                 <ListItemIcon>
                     <SafetyDividerIcon />
                 </ListItemIcon>
                 <ListItemText primary="Role" />
             </ListItemButton>
-            <ListItemButton onClick={() => router.push('/routes/church')}>
+            <ListItemButton onClick={() => router.push('/church')}>
                 <ListItemIcon>
                     <ChurchIcon />
                 </ListItemIcon>
                 <ListItemText primary="Church" />
             </ListItemButton>
-            <ListItemButton onClick={() => router.push('/routes/members')}>
+            <ListItemButton onClick={() => router.push('/members')}>
                 <ListItemIcon>
                     <PeopleIcon />
                 </ListItemIcon>

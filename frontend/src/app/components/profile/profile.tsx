@@ -13,21 +13,26 @@ import { usePathname, useRouter } from 'next/navigation';
 import AnimatedListbox from './animatedListbox';
 
 export default function MenuIntroduction() {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const path = usePathname();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      if (!path.includes('login'))
+        router.push('/auth/login')
+    }
+  });
 
   const createHandleMenuClick = (menuItem: string) => {
     return () => {
       if (menuItem === 'logout') {
         signOut();
       }
-
     };
   };
 
-  return (
-    status === 'authenticated' ?
+  if (session && session.user && session.user.id)
+    return (
       <Dropdown>
         <MenuButton sx={{
           display: 'flex',
@@ -35,20 +40,21 @@ export default function MenuIntroduction() {
         }}>
           <Person />
           <Typography>
-            {session?.user?.name}
+            {session!.user.firstName + " " + session!.user.lastName}
           </Typography>
         </MenuButton>
         <Menu slots={{ listbox: AnimatedListbox }}>
-          {/* TODO {session?.user.roles.map((roleName) => {
+          {session!.user.roles.map((roleName) => {
             return (
               <MenuItem key={roleName} onClick={createHandleMenuClick(roleName.trim().toLocaleLowerCase())}>{roleName}</MenuItem>
             )
-          })} */}
+          })}
           <Divider />
           <MenuItem onClick={createHandleMenuClick('logout')}>Log out</MenuItem>
         </Menu>
-      </Dropdown> : <>{path.includes('login') ? <></> : router.push('/routes/auth/login')}</>
-  );
+      </Dropdown>
+    )
+  return <></>
 }
 
 const MenuItem = styled(BaseMenuItem)(
